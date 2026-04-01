@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<title>Para Ud</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,400&family=Lora:ital,wght@0,400;1,400&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+html,body{width:100%;min-height:100%;background:#0d0600;}
+body{display:flex;flex-direction:column;align-items:center;padding:28px 14px 70px;font-family:'Lora',Georgia,serif;overflow-x:hidden;}
+
+/* ── WhatsApp blocker screen ── */
+#wablocker{
+  display:none;
+  position:fixed;inset:0;
+  background:#0d0600;
+  z-index:9999;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  padding:32px 24px;
+  text-align:center;
+}
+#wablocker.show{display:flex;}
+.wb-icon{font-size:3rem;margin-bottom:18px;}
+.wb-title{
+  font-family:'Playfair Display',Georgia,serif;
+  font-style:italic;
+  color:#f0c96b;
+  font-size:1.4rem;
+  margin-bottom:12px;
+}
+.wb-text{
+  color:#fdf3dc;
+  font-size:.95rem;
+  line-height:1.7;
+  font-style:italic;
+  margin-bottom:28px;
+  opacity:.85;
+}
+.wb-btn{
+  background:#c9973a;
+  color:#fff;
+  border:none;
+  border-radius:6px;
+  padding:14px 32px;
+  font-family:'Lora',Georgia,serif;
+  font-size:1rem;
+  font-style:italic;
+  cursor:pointer;
+  letter-spacing:.06em;
+  min-height:50px;
+  -webkit-appearance:none;
+}
+.wb-hint{
+  margin-top:20px;
+  color:#c9973a;
+  font-size:.78rem;
+  opacity:.7;
+  line-height:1.6;
+}
+
+/* ── Main app ── */
+.star{position:fixed;background:#fff;border-radius:50%;pointer-events:none;}
+@keyframes tw{from{opacity:.08}to{opacity:.82}}
+.titulo{color:#f0c96b;font-family:'Playfair Display',Georgia,serif;font-style:italic;font-size:1.1rem;letter-spacing:.13em;margin-bottom:14px;text-align:center;position:relative;z-index:1;}
+#carta{background:#fdf3dc;border:1.5px solid #c9973a;border-radius:6px;padding:22px 20px;max-width:390px;width:100%;text-align:center;margin-bottom:18px;position:relative;z-index:1;}
+.cf{color:#c9973a;font-size:24px;margin-bottom:8px;}
+.ct{color:#2d1a00;font-size:.97rem;line-height:1.82;font-style:italic;}
+.ci{margin-top:14px;color:#7a3d00;font-size:.84rem;}
+.ci b{background:#c9973a;color:#fff;border-radius:16px;padding:3px 12px;font-size:.78rem;display:inline-block;margin-top:6px;}
+#pista{color:#c9973a;font-style:italic;font-size:.84rem;text-align:center;margin-bottom:14px;min-height:1.3em;opacity:0;transition:opacity .5s;padding:0 8px;position:relative;z-index:1;}
+#pista.vis{opacity:1;}
+#mw{width:100%;max-width:460px;position:relative;margin-bottom:20px;z-index:1;}
+#msv{width:100%;height:auto;display:block;border-radius:7px;}
+#bur{position:absolute;background:#fdf3dc;border:1.5px solid #c9973a;border-radius:10px;padding:9px 14px;font-style:italic;color:#2d1a00;font-size:.88rem;text-align:center;pointer-events:none;opacity:0;transition:opacity .3s,transform .3s;z-index:30;max-width:175px;white-space:normal;transform:translateY(8px) scale(.9);}
+#bur::after{content:'';position:absolute;bottom:-7px;left:50%;transform:translateX(-50%);border-left:7px solid transparent;border-right:7px solid transparent;border-top:7px solid #c9973a;}
+#bur.vis{opacity:1;transform:translateY(0) scale(1);}
+#cw{display:flex;flex-direction:column;align-items:center;gap:10px;opacity:.28;transition:opacity .7s;filter:grayscale(.7);position:relative;z-index:1;}
+#cw.hab{opacity:1;filter:none;}
+#cw.hab #csv{filter:drop-shadow(0 0 14px rgba(201,151,58,.7));cursor:pointer;}
+#tp{transform-origin:80px 92px;transition:transform .8s cubic-bezier(.4,0,.2,1);}
+#bi{opacity:0;transition:opacity .6s ease .4s;}
+.ab #tp{transform:rotate(-55deg) translate(-10px,-5px);}
+.ab #bi{opacity:1;}
+#btnA{display:none;background:none;border:2px solid #c9973a;color:#f0c96b;font-family:'Lora',Georgia,serif;font-style:italic;font-size:.95rem;padding:12px 30px;border-radius:4px;cursor:pointer;min-height:48px;letter-spacing:.08em;-webkit-appearance:none;}
+#rev{display:none;text-align:center;margin-top:14px;padding:0 8px;position:relative;z-index:1;}
+.rl{color:#c9973a;font-size:.72rem;letter-spacing:.28em;text-transform:uppercase;margin-bottom:4px;}
+.rp{font-family:'Playfair Display',Georgia,serif;font-style:italic;font-size:3.2rem;color:#f0c96b;text-shadow:0 0 28px rgba(240,201,107,.85);line-height:1;}
+.rs{color:#fdf3dc;font-style:italic;font-size:1rem;margin-top:9px;opacity:.9;}
+.rpr{margin-top:7px;font-size:.9rem;color:#f0c96b;letter-spacing:.07em;}
+.part{position:fixed;pointer-events:none;z-index:99;font-size:1.1rem;animation:volar 2.4s ease-out forwards;}
+@keyframes volar{0%{opacity:1;transform:translateY(0) scale(1) rotate(0deg);}100%{opacity:0;transform:translateY(-220px) scale(.25) rotate(700deg);}}
+.sdone .sout{fill:#c9973a!important;}
+</style>
+</head>
+<body>
+
+<!-- WhatsApp blocker -->
+<div id="wablocker">
+  <div class="wb-icon">&#127800;</div>
+  <p class="wb-title">Hay algo especial para usted</p>
+  <p class="wb-text">
+    Para que la sorpresa funcione<br>
+    necesita abrirlo en Safari.<br><br>
+    Pulse el boton y en 2 segundos<br>
+    estara lista la magia.
+  </p>
+  <button class="wb-btn" onclick="abrirEnSafari()">&#10022; Abrir en Safari &#10022;</button>
+  <p class="wb-hint">
+    Si no abre automaticamente:<br>
+    pulse los 3 puntitos &#8942; arriba<br>
+    y elija "Abrir en Safari"
+  </p>
+</div>
+
+<!-- App principal -->
+<p class="titulo">&#10022; Hay algo aqui para usted &#10022;</p>
+
+<div id="carta">
+  <div class="cf">&#10023;</div>
+  <p class="ct">
+    Hay tesoros que el mundo entero busca<br>
+    y yo ya encontre el mio.<br><br>
+    No esta hecho de oro ni de piedras preciosas,<br>
+    esta hecho de usted &mdash; de cada parte suya<br>
+    que me tiene sin aliento.<br><br>
+    Siga el camino y descubra por que.
+  </p>
+  <p class="ci">Pulse cada <strong>&#10022;</strong> del mapa en orden<br><b>&#9660; empiece abajo &#9660;</b></p>
+</div>
+
+<p id="pista"></p>
+
+<div id="mw">
+  <svg id="msv" viewBox="0 0 480 420" xmlns="http://www.w3.org/2000/svg">
+    <rect width="480" height="420" fill="#130800"/>
+    <rect x="7" y="7" width="466" height="406" rx="5" stroke="#c9973a" stroke-width="1" stroke-dasharray="6 4" fill="none" opacity="0.28"/>
+    <path d="M0 360 Q60 330 120 350 Q180 370 240 335 Q300 300 360 325 Q420 348 480 318 L480 420 L0 420Z" fill="#0a0400"/>
+    <polygon points="80,140 120,230 40,230" fill="#1e0d00" opacity="0.9"/>
+    <polygon points="80,140 95,175 65,175" fill="white" opacity="0.07"/>
+    <polygon points="390,80 430,170 350,170" fill="#1e0d00" opacity="0.9"/>
+    <polygon points="390,80 405,115 375,115" fill="white" opacity="0.07"/>
+    <text x="14"  y="175" font-size="20">&#127794;</text>
+    <text x="440" y="220" font-size="20">&#127794;</text>
+    <text x="200" y="310" font-size="17">&#127794;</text>
+    <path d="M310 420 Q318 395 305 378 Q290 360 300 340" stroke="#0a2a4a" stroke-width="5" stroke-linecap="round" fill="none" opacity="0.5"/>
+    <text x="432" y="400" font-size="20" opacity="0.4">&#129517;</text>
+    <path id="cp"
+      d="M 240 395 C 230 375 210 360 195 340 C 178 318 185 295 170 275 C 155 255 130 252 118 232 C 106 212 115 188 108 165 C 100 140 78 128 75 108 C 72 88 90 72 110 65 C 135 57 158 68 178 62 C 205 54 220 35 240 28 C 262 20 282 35 305 42 C 328 50 348 45 368 55 C 392 67 405 90 400 115 C 395 140 375 155 372 178 C 368 205 385 225 378 250 C 370 278 348 290 340 318 C 332 344 340 368 330 390"
+      stroke="#f0c96b" stroke-width="2.5" stroke-linecap="round" stroke-dasharray="9 6" fill="none" opacity="0.85"
+      style="stroke-dashoffset:1400;transition:stroke-dashoffset 4s ease;"/>
+    <circle cx="240" cy="395" r="6" fill="#f0c96b" opacity="0.9"/>
+    <text x="210" y="413" font-size="9" fill="#f0c96b" font-family="serif" opacity="0.75">inicio</text>
+
+    <g id="s0" transform="translate(195,340)">
+      <circle cx="0" cy="0" r="32" fill="rgba(0,0,0,0.01)"/>
+      <circle class="sout" cx="0" cy="0" r="19" fill="#2d1500" stroke="#f0c96b" stroke-width="2.5"/>
+      <text x="0" y="7" text-anchor="middle" font-size="16" fill="#f0c96b">&#10022;</text>
+    </g>
+    <g id="s1" transform="translate(118,232)">
+      <circle cx="0" cy="0" r="32" fill="rgba(0,0,0,0.01)"/>
+      <circle class="sout" cx="0" cy="0" r="19" fill="#2d1500" stroke="#f0c96b" stroke-width="2.5"/>
+      <text x="0" y="7" text-anchor="middle" font-size="16" fill="#f0c96b">&#10022;</text>
+    </g>
+    <g id="s2" transform="translate(110,65)">
+      <circle cx="0" cy="0" r="32" fill="rgba(0,0,0,0.01)"/>
+      <circle class="sout" cx="0" cy="0" r="19" fill="#2d1500" stroke="#f0c96b" stroke-width="2.5"/>
+      <text x="0" y="7" text-anchor="middle" font-size="16" fill="#f0c96b">&#10022;</text>
+    </g>
+    <g id="s3" transform="translate(240,28)">
+      <circle cx="0" cy="0" r="32" fill="rgba(0,0,0,0.01)"/>
+      <circle class="sout" cx="0" cy="0" r="19" fill="#2d1500" stroke="#f0c96b" stroke-width="2.5"/>
+      <text x="0" y="7" text-anchor="middle" font-size="16" fill="#f0c96b">&#10022;</text>
+    </g>
+    <g id="s4" transform="translate(400,115)">
+      <circle cx="0" cy="0" r="32" fill="rgba(0,0,0,0.01)"/>
+      <circle class="sout" cx="0" cy="0" r="19" fill="#2d1500" stroke="#f0c96b" stroke-width="2.5"/>
+      <text x="0" y="7" text-anchor="middle" font-size="16" fill="#f0c96b">&#10022;</text>
+    </g>
+
+    <g transform="translate(330,390)">
+      <line x1="-12" y1="-12" x2="12" y2="12" stroke="#e03040" stroke-width="3.5" stroke-linecap="round"/>
+      <line x1="12"  y1="-12" x2="-12" y2="12" stroke="#e03040" stroke-width="3.5" stroke-linecap="round"/>
+      <circle cx="0" cy="0" r="17" stroke="#e03040" stroke-width="1.5" fill="none" opacity="0.5"/>
+      <text x="0" y="32" text-anchor="middle" font-size="9" fill="#e03040" opacity="0.75">el tesoro</text>
+    </g>
+  </svg>
+  <div id="bur"></div>
+</div>
+
+<div id="cw">
+  <svg id="csv" width="160" height="148" viewBox="0 0 160 150">
+    <ellipse id="bi" cx="80" cy="92" rx="48" ry="10" fill="#f0c96b" opacity="0.6"/>
+    <rect x="15" y="90" width="130" height="55" rx="6" fill="#6b3300"/>
+    <rect x="15" y="90" width="130" height="55" rx="6" stroke="#c9973a" stroke-width="2.5"/>
+    <rect x="15" y="90" width="20"  height="55" fill="#c9973a" opacity="0.14"/>
+    <rect x="125" y="90" width="20" height="55" fill="#c9973a" opacity="0.14"/>
+    <line x1="15" y1="112" x2="145" y2="112" stroke="#c9973a" stroke-width="1" opacity="0.35"/>
+    <line x1="15" y1="128" x2="145" y2="128" stroke="#c9973a" stroke-width="1" opacity="0.25"/>
+    <rect x="66" y="103" width="28" height="22" rx="5" fill="#c9973a"/>
+    <path d="M73 103 Q73 92 80 92 Q87 92 87 103" stroke="#a07820" stroke-width="3" fill="none" stroke-linecap="round"/>
+    <circle cx="80" cy="114" r="4" fill="#6b3300"/>
+    <g id="tp">
+      <rect x="15" y="60" width="130" height="34" rx="6" fill="#8a4200"/>
+      <rect x="15" y="60" width="130" height="34" rx="6" stroke="#c9973a" stroke-width="2.5"/>
+      <path d="M15 78 Q80 52 145 78" fill="#9b4d00" stroke="#c9973a" stroke-width="1.5"/>
+      <rect x="15" y="60" width="20"  height="34" fill="#c9973a" opacity="0.14"/>
+      <rect x="125" y="60" width="20" height="34" fill="#c9973a" opacity="0.14"/>
+      <rect x="25"  y="91" width="16" height="7" rx="3" fill="#c9973a"/>
+      <rect x="119" y="91" width="16" height="7" rx="3" fill="#c9973a"/>
+    </g>
+    <ellipse cx="80" cy="148" rx="52" ry="7" fill="black" opacity="0.35"/>
+  </svg>
+  <button id="btnA">&#10022; Abralo, mi amor &#10022;</button>
+</div>
+
+<div id="rev">
+  <p class="rl">el tesoro es</p>
+  <p class="rp">Usted</p>
+  <p class="rs">y siempre lo ha sido &#127800;</p>
+  <p class="rpr">&#10022; Para Ud, que es todo &#10022;</p>
+</div>
+
+<script>
+// ── Detectar WhatsApp y mostrar pantalla de bloqueo ──
+var ua = navigator.userAgent || '';
+var esWhatsApp = /WhatsApp/i.test(ua);
+var esVisorInApp = /FBAN|FBAV|Instagram|Line|Snapchat|MicroMessenger|GSA/i.test(ua);
+
+if (esWhatsApp || esVisorInApp) {
+  document.getElementById('wablocker').classList.add('show');
+}
+
+function abrirEnSafari() {
+  // Intenta abrir la misma URL en Safari usando el scheme x-safari
+  var url = window.location.href;
+  window.location.href = 'x-safari-' + url;
+  // Fallback: copiar instrucciones
+  setTimeout(function(){
+    alert('Pulse los 3 puntitos \u22EE arriba a la derecha y elija "Abrir en Safari"');
+  }, 1500);
+}
+
+// ── Stars ──
+(function(){
+  for(var i=0;i<80;i++){
+    var s=document.createElement('div');
+    s.className='star';
+    var sz=(Math.random()*2+0.4).toFixed(1);
+    s.style.width=sz+'px'; s.style.height=sz+'px';
+    s.style.top=(Math.random()*100)+'%';
+    s.style.left=(Math.random()*100)+'%';
+    s.style.animation='tw '+(Math.random()*3+1.5).toFixed(1)+'s '+(Math.random()*3).toFixed(1)+'s linear infinite alternate';
+    document.body.appendChild(s);
+  }
+})();
+
+// ── Draw path ──
+setTimeout(function(){ document.getElementById('cp').style.strokeDashoffset='0'; }, 300);
+
+var paradas=[
+  {msg:'Me gusta su mirada...',    next:'Siga el camino \u2191 pulse el siguiente \u2726'},
+  {msg:'Me gustan sus labios...',  next:'Siga subiendo \u2191 pulse el siguiente \u2726'},
+  {msg:'Me gusta su rostro...',    next:'Casi llega \u2191 pulse el siguiente \u2726'},
+  {msg:'Me gusta su cuerpo...',    next:'Un paso mas \u2191 pulse el siguiente \u2726'},
+  {msg:'Me gusta toda usted...',   next:'\u00a1Llego! Pulse el cofre para abrirlo'},
+];
+var svgCoords=[{x:195,y:340},{x:118,y:232},{x:110,y:65},{x:240,y:28},{x:400,y:115}];
+
+var actual=0, abierto=false;
+var bur=document.getElementById('bur');
+var pista=document.getElementById('pista');
+var mw=document.getElementById('mw');
+var msv=document.getElementById('msv');
+var burTimer=null;
+
+function mostrarPista(t){ pista.textContent=t; pista.classList.add('vis'); }
+
+// ── iOS Safari fix: detect touch on document, use elementFromPoint ──
+document.addEventListener('touchend', function(e){
+  var touch = e.changedTouches[0];
+  var el = document.elementFromPoint(touch.clientX, touch.clientY);
+  var cur = el;
+  for(var d=0; d<8; d++){
+    if(!cur) break;
+    var id = cur.id || '';
+    if(id==='s0'||id==='s1'||id==='s2'||id==='s3'||id==='s4'){
+      e.preventDefault();
+      activar(parseInt(id[1]));
+      return;
+    }
+    if(id==='csv'||id==='btnA'){
+      e.preventDefault();
+      abrir();
+      return;
+    }
+    cur = cur.parentElement;
+  }
+}, {passive:false});
+
+// Click fallback (Chrome / desktop)
+for(var i=0;i<5;i++){
+  (function(idx){
+    document.getElementById('s'+idx).style.cursor='pointer';
+    document.getElementById('s'+idx).addEventListener('click', function(){ activar(idx); });
+  })(i);
+}
+document.getElementById('csv').addEventListener('click', abrir);
+document.getElementById('btnA').addEventListener('click', abrir);
+
+function activar(idx){
+  if(idx!==actual){
+    mostrarPista('Pulse los \u2726 en orden, de abajo hacia arriba');
+    return;
+  }
+  document.getElementById('s'+idx).classList.add('sdone');
+
+  var svgR = msv.getBoundingClientRect();
+  var wR   = mw.getBoundingClientRect();
+  var scX  = svgR.width/480, scY = svgR.height/420;
+  var cx   = svgCoords[idx].x * scX;
+  var cy   = svgCoords[idx].y * scY;
+
+  bur.textContent = paradas[idx].msg;
+  var bw=175, left=cx-bw/2;
+  if(left<3) left=3;
+  if(left+bw>wR.width-3) left=wR.width-bw-3;
+  var top=cy-68; if(top<3) top=3;
+  bur.style.left=left+'px'; bur.style.top=top+'px'; bur.style.width=bw+'px';
+  bur.classList.add('vis');
+
+  particulas(svgR.left+cx, svgR.top+cy);
+  mostrarPista(paradas[idx].next);
+
+  if(burTimer) clearTimeout(burTimer);
+  burTimer=setTimeout(function(){ bur.classList.remove('vis'); }, 3500);
+
+  actual++;
+  if(actual===paradas.length){
+    setTimeout(function(){
+      document.getElementById('cw').classList.add('hab');
+      document.getElementById('btnA').style.display='block';
+    }, 700);
+  }
+}
+
+function abrir(){
+  if(abierto) return;
+  if(actual<paradas.length){ mostrarPista('Primero pulse todos los \u2726 del camino'); return; }
+  abierto=true;
+  document.getElementById('btnA').style.display='none';
+  document.getElementById('csv').classList.add('ab');
+  particulasCofre();
+  setTimeout(function(){
+    document.getElementById('rev').style.display='block';
+    particulasCofre();
+  }, 900);
+}
+
+function particulas(x,y){
+  var em=['&#10024;','&#127800;','&#9733;','&#10022;','&#127804;'];
+  for(var i=0;i<8;i++){
+    (function(){
+      var p=document.createElement('div'); p.className='part';
+      p.innerHTML=em[Math.floor(Math.random()*em.length)];
+      p.style.left=(x+(Math.random()-.5)*110)+'px';
+      p.style.top=y+'px';
+      p.style.animationDelay=(Math.random()*.25).toFixed(2)+'s';
+      p.style.animationDuration=(Math.random()*1+1.8).toFixed(2)+'s';
+      document.body.appendChild(p);
+      setTimeout(function(){ if(p.parentNode) p.parentNode.removeChild(p); }, 3200);
+    })();
+  }
+}
+
+function particulasCofre(){
+  var csv=document.getElementById('csv');
+  var r=csv.getBoundingClientRect();
+  var cx=r.left+r.width/2, cy=r.top+r.height/2;
+  var em=['&#10024;','&#127800;','&#9733;','&#10022;','&#127804;','&#9829;'];
+  for(var i=0;i<18;i++){
+    (function(){
+      var p=document.createElement('div'); p.className='part';
+      p.innerHTML=em[Math.floor(Math.random()*em.length)];
+      p.style.left=(cx+(Math.random()-.5)*200)+'px';
+      p.style.top=cy+'px';
+      p.style.animationDelay=(Math.random()*.35).toFixed(2)+'s';
+      p.style.animationDuration=(Math.random()*1.2+2).toFixed(2)+'s';
+      document.body.appendChild(p);
+      setTimeout(function(){ if(p.parentNode) p.parentNode.removeChild(p); }, 4000);
+    })();
+  }
+}
+</script>
+</body>
+</html>
